@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-SucursalApplication<sucursal>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "cl.perfulandia.sucursal.SucursalApplication",
+            "projectName": "sucursal",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

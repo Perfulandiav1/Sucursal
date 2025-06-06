@@ -9,7 +9,8 @@ import org.springframework.test.context.ActiveProfiles;
 class SucursalApplicationTests {
 
 	@Test
-	void contextLoads() {
-	}
+    void mainTest() {
+        SucursalApplication.main(new String[] {});
+    }
 
 }

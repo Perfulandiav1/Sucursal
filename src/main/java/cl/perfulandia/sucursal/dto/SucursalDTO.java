@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class SucursalDTO {
-    private Long sucuraslId;
+    private Long sucursalId;
     private String nombre;
     private String direccion;
     private String telefono;

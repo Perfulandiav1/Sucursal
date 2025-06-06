@@ -2,7 +2,6 @@ package cl.perfulandia.sucursal.service;
 
 import cl.perfulandia.sucursal.dto.MovimientoDTO;
 import cl.perfulandia.sucursal.dto.MovimientoRequest;
-import cl.perfulandia.sucursal.dto.SucursalDTO;
 import cl.perfulandia.sucursal.feing.InventarioClient;
 import cl.perfulandia.sucursal.modelo.Sucursal;
 import cl.perfulandia.sucursal.repository.SucursalRepository;
@@ -24,20 +23,8 @@ public class SucursalService {
         return sucursalRepository.findAll();
     }
 
-    public SucursalDTO obtenerSucursalPorId(Long id) {
-        Sucursal sucursal = sucursalRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("Sucursal no encontrada con id: " + id));
-        return convertirASucursalDTO(sucursal);
-    }
-
-    private SucursalDTO convertirASucursalDTO(Sucursal sucursal) {
-        return new SucursalDTO(
-                sucursal.getSucursalId(),
-                sucursal.getNombre(),
-                sucursal.getDireccion(),
-                sucursal.getTelefono(),
-                sucursal.getCorreo()// Aquí puedes agregar más campos si lo necesitas
-        );
+    public Sucursal obtenerSucursalPorId(Long id) {
+        return sucursalRepository.findById(id).orElse(null);
     }
 
 

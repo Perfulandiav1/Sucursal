@@ -2,7 +2,6 @@ package cl.perfulandia.sucursal.controller;
 
 import cl.perfulandia.sucursal.dto.MovimientoDTO;
 import cl.perfulandia.sucursal.dto.MovimientoRequest;
-import cl.perfulandia.sucursal.dto.SucursalDTO;
 import cl.perfulandia.sucursal.modelo.Sucursal;
 import cl.perfulandia.sucursal.service.SucursalService;
 
@@ -27,7 +26,7 @@ public class SucursalController {
     }
 
     @GetMapping("/sucursal/{id}")
-    public SucursalDTO obtenerSucursalPorId(@PathVariable Long id) {
+    public Sucursal obtenerSucursalPorId(@PathVariable Long id) {
         return sucursalService.obtenerSucursalPorId(id);
     }
 
@@ -37,7 +36,7 @@ public class SucursalController {
     }
 
     @DeleteMapping("/eliminar/{id}")
-    public void eliminarSucursal(@PathVariable Long sucursalId) {
+    public void eliminarSucursal(@PathVariable("id") Long sucursalId) {
         sucursalService.eliminarSucursal(sucursalId);
     }
 

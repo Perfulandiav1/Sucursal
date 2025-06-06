@@ -1,0 +1,9 @@
+cl\perfulandia\sucursal\dto\MovimientoDTO.class
+cl\perfulandia\sucursal\dto\MovimientoRequest.class
+cl\perfulandia\sucursal\controller\SucursalController.class
+cl\perfulandia\sucursal\modelo\Sucursal.class
+cl\perfulandia\sucursal\SucursalApplication.class
+cl\perfulandia\sucursal\repository\SucursalRepository.class
+cl\perfulandia\sucursal\feing\InventarioClient.class
+cl\perfulandia\sucursal\dto\SucursalDTO.class
+cl\perfulandia\sucursal\service\SucursalService.class

@@ -1,5 +1,6 @@
 package cl.perfulandia.sucursal.controller;
 
+import cl.perfulandia.sucursal.assemblers.SucursalModelAssembler;
 import cl.perfulandia.sucursal.dto.MovimientoDTO;
 import cl.perfulandia.sucursal.dto.MovimientoRequest;
 import cl.perfulandia.sucursal.modelo.Sucursal;
@@ -13,9 +14,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;   
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -30,8 +33,11 @@ public class SucursalController {
 
     private final SucursalService sucursalService;
 
-    public SucursalController(SucursalService sucursalService) {
+    private final SucursalModelAssembler assembler;
+
+    public SucursalController(SucursalService sucursalService, SucursalModelAssembler assembler) {
         this.sucursalService = sucursalService;
+        this.assembler = assembler;
     }
 
     @Operation(summary = "Listar todas las sucursales", description = "Obtiene una lista con todas las sucursales registradas.")
@@ -39,42 +45,48 @@ public class SucursalController {
             @ApiResponse(responseCode = "200", description = "Lista de sucursales obtenida correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Sucursal.class)))
     })
     @GetMapping("/listar")
-    public List<Sucursal> obteneSucursales() {
-        logger.info("Obteniendo lista de todas las sucursales");
-        // Llama al servicio para obtener la lista de sucursales
-        return sucursalService.obtenerSucursales();
+    public ResponseEntity<List<EntityModel<Sucursal>>> obteneSucursales() {
+        logger.info("Obteniendo lista de todas las sucursales");        
+        List<EntityModel<Sucursal>> sucursales = sucursalService.obtenerSucursales().stream().map(assembler::toModel)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(sucursales);
     }
-
+    //
     @Operation(summary = "Obtener la sucursal por id ", description = "Obtiene una sucursal por su ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sucursal obtenida correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Sucursal.class)))
     })
     @GetMapping("/sucursal/{id}")
-    public Sucursal obtenerSucursalPorId(@PathVariable Long id) {
+    public ResponseEntity<EntityModel<Sucursal>> obtenerSucursalPorId(@PathVariable Long id) {
         logger.info("Obteniendo sucursal con ID: {}", id);
-        return sucursalService.obtenerSucursalPorId(id);
+        Sucursal sucursal = sucursalService.obtenerSucursalPorId(id);
+        if (sucursal == null) {
+            logger.warn("Sucursal con ID {} no encontrada", id);
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(assembler.toModel(sucursal));
     }
     @Operation(summary = "Guardar sucursal ", description = "Crea y guarda una nueva sucursal.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sucursal creada/guardad correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Sucursal.class)))
     })
     @PostMapping("/guardar")
-    public Sucursal guardarSucursal(@RequestBody Sucursal sucursal) {
+    public ResponseEntity<EntityModel<Sucursal>> guardarSucursal(@RequestBody Sucursal sucursal) {
         logger.info("Guardando sucursal: {}", sucursal);
         if (sucursal.getSucursalId() != null) {
             logger.warn("La sucursal ya tiene un ID asignado, se actualizará en lugar de crear una nueva.");
         }
-        return sucursalService.guardarSucursal(sucursal);
+        return ResponseEntity.ok(assembler.toModel(sucursalService.guardarSucursal(sucursal)));
     }
     @Operation(summary = "Eliminar sucursal", description = "Elimina una sucursal por su ID.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Sucursal eliminada correctamente", content = @Content(mediaType = "application/json", schema = @Schema(implementation = Sucursal.class)))
     })
     @DeleteMapping("/eliminar/{id}")
-    public void eliminarSucursal(@PathVariable("id") Long sucursalId) {
+    public ResponseEntity<Void> eliminarSucursal(@PathVariable("id") Long sucursalId) {
         logger.info("Eliminando sucursal con ID: {}", sucursalId);
-        // Llama al servicio para eliminar la sucursal
         sucursalService.eliminarSucursal(sucursalId);
+        return ResponseEntity.ok().build();
     }
     @Operation(summary = "Registrar Movimiento", description = "Registra un movimiento en el inventario de una sucursal.")
     @ApiResponses(value = {

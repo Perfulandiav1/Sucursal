@@ -5,8 +5,13 @@ import lombok.Data;
 @Data
 public class MovimientoRequest {
     private Long sucursalId;
-    private Long productoId;
+    private ProductoDTO producto;
     private Integer cantidad;
-    private String tipo; // "ENTRADA" o "SALIDA"
+    private String tipo;
+
+    @Data
+    public static class ProductoDTO {
+        private Long id;
+    }
 }
 

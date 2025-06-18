@@ -9,7 +9,7 @@ import cl.perfulandia.sucursal.dto.MovimientoRequest;
 
 @FeignClient(name = "inventario-service", url = "http://localhost:8081")
 public interface InventarioClient {
-    @PostMapping("/api/inventario/movimiento")
+    @PostMapping("/api/movimientos/registrar")
     MovimientoDTO registrarMovimiento(@RequestBody MovimientoRequest request);
 }
 

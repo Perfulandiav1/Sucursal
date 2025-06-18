@@ -60,4 +60,18 @@ public class SucursalService {
         return inventarioClient.registrarMovimiento(request);
     }
 
+    public MovimientoDTO registrarMovimientoEnInventario(Long sucursalId, Long productoId, Integer cantidad, String tipo) {
+        MovimientoRequest req = new MovimientoRequest();
+        req.setSucursalId(sucursalId);
+
+        MovimientoRequest.ProductoDTO prod = new MovimientoRequest.ProductoDTO();
+        prod.setId(productoId);
+        req.setProducto(prod);
+
+        req.setCantidad(cantidad);
+        req.setTipo(tipo);
+
+        // Llamada al Feign Client
+        return inventarioClient.registrarMovimiento(req);
+    }
 }

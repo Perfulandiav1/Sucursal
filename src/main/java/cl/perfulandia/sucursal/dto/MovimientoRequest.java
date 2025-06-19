@@ -1,7 +1,10 @@
 package cl.perfulandia.sucursal.dto;
 
 import lombok.Data;
-
+/* 
+ *  Clase DTO para representar una solicitud de movimiento de inventario en una sucursal.
+ *  Contiene información sobre la sucursal, producto, cantidad y tipo de movimiento.
+ */
 @Data
 public class MovimientoRequest {
     private Long sucursalId;

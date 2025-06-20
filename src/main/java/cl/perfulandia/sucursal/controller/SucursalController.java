@@ -1,6 +1,7 @@
 package cl.perfulandia.sucursal.controller;
 
 import cl.perfulandia.sucursal.assemblers.SucursalModelAssembler;
+import cl.perfulandia.sucursal.dto.AlertaInventario;
 import cl.perfulandia.sucursal.dto.MovimientoDTO;
 import cl.perfulandia.sucursal.dto.MovimientoRequest;
 import cl.perfulandia.sucursal.modelo.Sucursal;
@@ -153,4 +154,11 @@ public class SucursalController {
         return ResponseEntity.ok(movimiento);
     }   
 
+    @GetMapping("/alertas/sucursal/{sucursalId}/producto/{productoId}")
+    public ResponseEntity<List<AlertaInventario>> listarAlertas(
+            @PathVariable Long sucursalId,
+            @PathVariable Long productoId) {
+        List<AlertaInventario> alertas = sucursalService.obtenerAlertasPorSucursalYProducto(sucursalId, productoId);
+        return ResponseEntity.ok(alertas);
+    }
 }

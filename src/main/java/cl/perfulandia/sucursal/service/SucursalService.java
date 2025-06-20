@@ -1,6 +1,7 @@
 package cl.perfulandia.sucursal.service;
 
 import cl.perfulandia.sucursal.controller.SucursalController;
+import cl.perfulandia.sucursal.dto.AlertaInventario;
 import cl.perfulandia.sucursal.dto.MovimientoDTO;
 import cl.perfulandia.sucursal.dto.MovimientoRequest;
 import cl.perfulandia.sucursal.feing.InventarioClient;
@@ -25,7 +26,13 @@ public class SucursalService {
         logger.info("SucursalService inicializado correctamente");
         logger.debug("SucursalRepository inyectado: {}", sucursalRepository != null);
     }
-
+    
+    
+    /**
+     * Obtiene una lista de todas las sucursales.
+     * 
+     * @return Lista de Sucursal
+     */
     public List<Sucursal> obtenerSucursales() {
         logger.info("Obteniendo lista de todas las sucursales");
         // Llama al repositorio para obtener la lista de sucursales
@@ -73,5 +80,9 @@ public class SucursalService {
 
         // Llamada al Feign Client
         return inventarioClient.registrarMovimiento(req);
+    }
+
+    public List<AlertaInventario> obtenerAlertasPorSucursalYProducto(Long sucursalId, Long productoId) {
+        return inventarioClient.listarAlertasPorSucursalYProducto(sucursalId, productoId);
     }
 }

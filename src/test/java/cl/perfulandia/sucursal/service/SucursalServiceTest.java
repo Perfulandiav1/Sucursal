@@ -18,25 +18,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-
 import cl.perfulandia.sucursal.controller.SucursalController;
+import cl.perfulandia.sucursal.dto.AlertaInventario;
 import cl.perfulandia.sucursal.dto.MovimientoDTO;
 import cl.perfulandia.sucursal.dto.MovimientoRequest;
 import cl.perfulandia.sucursal.feing.InventarioClient;
 import cl.perfulandia.sucursal.modelo.Sucursal;
 import cl.perfulandia.sucursal.repository.SucursalRepository;
 
+/**
+ * SucursalServiceTest.java
+ * Clase de prueba para el servicio de sucursales.
+ * Verifica el comportamiento del servicio al interactuar con el repositorio y el cliente de inventario.
+ */
 @SpringBootTest
 @ActiveProfiles("test")
 public class SucursalServiceTest {
-
+    /**
+     * Servicio de sucursales que maneja la lógica de negocio.
+     */
     @Autowired
     private SucursalService sucursalService;
-
+    /**
+     * Repositorio de sucursales que interactúa con la base de datos.
+     */
     @MockBean
     private SucursalRepository sucursalRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(SucursalController.class);
+
 
     @Test
     public void testObtenerSucursales() {
@@ -61,6 +71,10 @@ public class SucursalServiceTest {
         logger.info("Test para obtener sucursales finalizado"); 
     }
 
+    /**
+     * Test para obtener una sucursal por su ID.
+     * Verifica que el servicio retorne la sucursal correcta cuando se le proporciona un ID válido.
+     */
     @Test
     public void testObtenerSucursalPorId() {
         logger.info("Iniciando test para obtener sucursal por ID");
@@ -79,6 +93,10 @@ public class SucursalServiceTest {
         logger.info("Test para obtener sucursal por ID finalizado");
     }
 
+    /**
+     * Test para obtener una sucursal por ID que no existe.
+     * Verifica que el servicio retorne null cuando se le proporciona un ID no válido.
+     */
     @Test
     public void testGuardarSucursal() {
         logger.info("Iniciando test para guardar sucursal");
@@ -109,6 +127,10 @@ public class SucursalServiceTest {
         logger.info("Test para guardar sucursal finalizado");   
     }
 
+    /**
+     * Test para eliminar una sucursal.
+     * Verifica que el servicio llame al método deleteById() del repositorio.
+     */
     @Test
     public void testEliminarSucursal() {
         logger.info("Iniciando test para eliminar sucursal");
@@ -127,6 +149,10 @@ public class SucursalServiceTest {
         logger.info("Test para eliminar sucursal finalizado");
     }
 
+    /**
+     * Test para registrar un movimiento en el inventario.
+     * Verifica que el servicio llame al método registrarMovimiento() del cliente de inventario.
+     */
     @Test
     void testRegistrarMovimientoEnInventario() {
         logger.info("Iniciando test para registrar movimiento en inventario");
@@ -167,6 +193,77 @@ public class SucursalServiceTest {
         logger.info("Test para registrar movimiento en inventario finalizado");
     }
     
+    /**
+     * Test para registrar un movimiento en el inventario con parámetros específicos.
+     * Verifica que el servicio construya correctamente el objeto MovimientoRequest y lo envíe al cliente de inventario.
+     */
+    @Test
+    void testRegistrarMovimientoEnInventarioConParametros() throws Exception {
+        // Arrange
+        SucursalRepository sucursalRepository = mock(SucursalRepository.class);
+        InventarioClient inventarioClient = mock(InventarioClient.class);
+        SucursalService sucursalService = new SucursalService(sucursalRepository);
+
+        // Inyecta el mock de InventarioClient usando reflexión
+        java.lang.reflect.Field field = SucursalService.class.getDeclaredField("inventarioClient");
+        field.setAccessible(true);
+        field.set(sucursalService, inventarioClient);
+
+        Long sucursalId = 1L;
+        Long productoId = 2L;
+        Integer cantidad = 5;
+        String tipo = "ENTRADA";
+
+        MovimientoRequest expectedRequest = new MovimientoRequest();
+        expectedRequest.setSucursalId(sucursalId);
+        MovimientoRequest.ProductoDTO prod = new MovimientoRequest.ProductoDTO();
+        prod.setId(productoId);
+        expectedRequest.setProducto(prod);
+        expectedRequest.setCantidad(cantidad);
+        expectedRequest.setTipo(tipo);
+
+        MovimientoDTO expectedResponse = new MovimientoDTO();
+
+        when(inventarioClient.registrarMovimiento(
+                org.mockito.ArgumentMatchers.refEq(expectedRequest)
+        )).thenReturn(expectedResponse);
+
+        // Act
+        MovimientoDTO result = sucursalService.registrarMovimientoEnInventario(sucursalId, productoId, cantidad, tipo);
+
+        // Assert
+        assertEquals(expectedResponse, result);
+        verify(inventarioClient, times(1)).registrarMovimiento(org.mockito.ArgumentMatchers.refEq(expectedRequest));
+    }
+
+    /**
+     * Test para obtener alertas de inventario por sucursal y producto.
+     * Verifica que el servicio llame al método listarAlertasPorSucursalYProducto del cliente de inventario.
+     */
+    @Test
+    void testObtenerAlertasPorSucursalYProducto() throws Exception {
+        // Arrange
+        SucursalRepository sucursalRepository = mock(SucursalRepository.class);
+        InventarioClient inventarioClient = mock(InventarioClient.class);
+        SucursalService sucursalService = new SucursalService(sucursalRepository);
+
+        // Inyecta el mock de InventarioClient usando reflexión
+        java.lang.reflect.Field field = SucursalService.class.getDeclaredField("inventarioClient");
+        field.setAccessible(true);
+        field.set(sucursalService, inventarioClient);
+
+        Long sucursalId = 1L;
+        Long productoId = 2L;
+        List<AlertaInventario> expectedAlertas = new ArrayList<>();
+        when(inventarioClient.listarAlertasPorSucursalYProducto(sucursalId, productoId)).thenReturn(expectedAlertas);
+
+        // Act
+        List<AlertaInventario> result = sucursalService.obtenerAlertasPorSucursalYProducto(sucursalId, productoId);
+
+        // Assert
+        assertEquals(expectedAlertas, result);
+        verify(inventarioClient, times(1)).listarAlertasPorSucursalYProducto(sucursalId, productoId);
+    }
 }
 
 

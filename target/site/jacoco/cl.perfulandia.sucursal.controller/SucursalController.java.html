@@ -1,50 +1,165 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SucursalController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sucursal</a> &gt; <a href="index.source.html" class="el_package">cl.perfulandia.sucursal.controller</a> &gt; <span class="el_source">SucursalController.java</span></div><h1>SucursalController.java</h1><pre class="source lang-java linenums">package cl.perfulandia.sucursal.controller;
 
+import cl.perfulandia.sucursal.assemblers.SucursalModelAssembler;
+import cl.perfulandia.sucursal.dto.AlertaInventario;
 import cl.perfulandia.sucursal.dto.MovimientoDTO;
 import cl.perfulandia.sucursal.dto.MovimientoRequest;
 import cl.perfulandia.sucursal.modelo.Sucursal;
 import cl.perfulandia.sucursal.service.SucursalService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;   
 import java.util.List;
-
-
+import java.util.stream.Collectors;
+/**
+ * Clase controller de sucursales , CRUD
+ */
 @RestController
 @RequestMapping(&quot;/api/sucursales&quot;)
+@Tag(name = &quot;Sucursales&quot;, description = &quot;Operaciones relacionadas con las sucursales&quot;)
 public class SucursalController {
 
+    /**
+     * Logger de la clase para registrar eventos y errores.
+     */
+<span class="fc" id="L34">    private static final Logger logger = LoggerFactory.getLogger(SucursalController.class);</span>
+
+    /**
+     * Servicio de sucursales que maneja la lógica de negocio.
+     */
     private final SucursalService sucursalService;
+    /**
+     * Ensamblador de modelos para convertir entidades a EntityModel.
+     */
+    private final SucursalModelAssembler assembler;
 
-<span class="fc" id="L19">    public SucursalController(SucursalService sucursalService) {</span>
-<span class="fc" id="L20">        this.sucursalService = sucursalService;</span>
-<span class="fc" id="L21">    }</span>
+    /**
+     * Constructor de la clase SucursalController.
+     * 
+     * @param sucursalService Servicio de sucursales para manejar la lógica de negocio.
+     * @param assembler Ensamblador de modelos para convertir entidades a EntityModel.
+     */
+<span class="fc" id="L51">    public SucursalController(SucursalService sucursalService, SucursalModelAssembler assembler) {</span>
+<span class="fc" id="L52">        this.sucursalService = sucursalService;</span>
+<span class="fc" id="L53">        this.assembler = assembler;</span>
+<span class="fc" id="L54">    }</span>
 
+    /**
+     * Endpoint para listar todas las sucursales.
+     * 
+     * @return ResponseEntity con una lista de EntityModel&lt;Sucursal&gt;.
+     */
+    @Operation(summary = &quot;Listar todas las sucursales&quot;, description = &quot;Obtiene una lista con todas las sucursales registradas.&quot;)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Lista de sucursales obtenida correctamente&quot;, content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Sucursal.class)))
+    })
+    /*
+     * Método para listar todas las sucursales.
+     */
     @GetMapping(&quot;/listar&quot;)
-    public List&lt;Sucursal&gt; obteneSucursales() {
-<span class="fc" id="L25">        return sucursalService.obtenerSucursales();</span>
+    public ResponseEntity&lt;List&lt;EntityModel&lt;Sucursal&gt;&gt;&gt; obteneSucursales() {
+<span class="fc" id="L70">        logger.info(&quot;Obteniendo lista de todas las sucursales&quot;);        </span>
+<span class="fc" id="L71">        List&lt;EntityModel&lt;Sucursal&gt;&gt; sucursales = sucursalService.obtenerSucursales().stream().map(assembler::toModel)</span>
+<span class="fc" id="L72">                .collect(Collectors.toList());</span>
+<span class="fc" id="L73">        return ResponseEntity.ok(sucursales);</span>
     }
-
+    /**
+     * Endpoint para obtener una sucursal por su ID.
+     * 
+     * @param id ID de la sucursal a obtener.
+     * @return ResponseEntity con el EntityModel&lt;Sucursal&gt; correspondiente.
+     */
+    @Operation(summary = &quot;Obtener la sucursal por id &quot;, description = &quot;Obtiene una sucursal por su ID.&quot;)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Sucursal obtenida correctamente&quot;, content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Sucursal.class)))
+    })
+    /*
+     * Método para obtener una sucursal por su ID.
+     */
     @GetMapping(&quot;/sucursal/{id}&quot;)
-    public Sucursal obtenerSucursalPorId(@PathVariable Long id) {
-<span class="fc" id="L30">        return sucursalService.obtenerSucursalPorId(id);</span>
+    public ResponseEntity&lt;EntityModel&lt;Sucursal&gt;&gt; obtenerSucursalPorId(@PathVariable Long id) {
+<span class="fc" id="L90">        logger.info(&quot;Obteniendo sucursal con ID: {}&quot;, id);</span>
+<span class="fc" id="L91">        Sucursal sucursal = sucursalService.obtenerSucursalPorId(id);</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        if (sucursal == null) {</span>
+<span class="fc" id="L93">            logger.warn(&quot;Sucursal con ID {} no encontrada&quot;, id);</span>
+<span class="fc" id="L94">            return ResponseEntity.notFound().build();</span>
+        }
+<span class="fc" id="L96">        return ResponseEntity.ok(assembler.toModel(sucursal));</span>
     }
-
+    /**
+     * Endpoint para guardar una nueva sucursal o actualizar una existente.
+     * 
+     * @param sucursal Sucursal a guardar o actualizar.
+     * @return ResponseEntity con el EntityModel&lt;Sucursal&gt; guardado o actualizado.
+     */
+    @Operation(summary = &quot;Guardar sucursal &quot;, description = &quot;Crea y guarda una nueva sucursal.&quot;)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Sucursal creada/guardad correctamente&quot;, content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Sucursal.class)))
+    })
+    /*
+     * Método para guardar una nueva sucursal o actualizar una existente.
+     * Si la sucursal ya tiene un ID asignado, se actualizará en lugar de crear una nueva.
+     */
     @PostMapping(&quot;/guardar&quot;)
-    public Sucursal guardarSucursal(@RequestBody Sucursal sucursal) {
-<span class="fc" id="L35">        return sucursalService.guardarSucursal(sucursal);</span>
+    public ResponseEntity&lt;EntityModel&lt;Sucursal&gt;&gt; guardarSucursal(@RequestBody Sucursal sucursal) {
+<span class="fc" id="L114">        logger.info(&quot;Guardando sucursal: {}&quot;, sucursal);</span>
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">        if (sucursal.getSucursalId() != null) {</span>
+<span class="fc" id="L116">            logger.warn(&quot;La sucursal ya tiene un ID asignado, se actualizará en lugar de crear una nueva.&quot;);</span>
+        }
+<span class="fc" id="L118">        return ResponseEntity.ok(assembler.toModel(sucursalService.guardarSucursal(sucursal)));</span>
     }
-
+    /*
+     * Método para eliminar una sucursal por su ID.
+     */
+    @Operation(summary = &quot;Eliminar sucursal&quot;, description = &quot;Elimina una sucursal por su ID.&quot;)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Sucursal eliminada correctamente&quot;, content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = Sucursal.class)))
+    })
+    /*
+     * Método para eliminar una sucursal por su ID.
+     * Si la sucursal no existe, se devolverá un error 404 Not Found.
+     */
     @DeleteMapping(&quot;/eliminar/{id}&quot;)
-    public void eliminarSucursal(@PathVariable(&quot;id&quot;) Long sucursalId) {
-<span class="fc" id="L40">        sucursalService.eliminarSucursal(sucursalId);</span>
-<span class="fc" id="L41">    }</span>
-
+    public ResponseEntity&lt;Void&gt; eliminarSucursal(@PathVariable(&quot;id&quot;) Long sucursalId) {
+<span class="fc" id="L133">        logger.info(&quot;Eliminando sucursal con ID: {}&quot;, sucursalId);</span>
+<span class="fc" id="L134">        sucursalService.eliminarSucursal(sucursalId);</span>
+<span class="fc" id="L135">        return ResponseEntity.ok().build();</span>
+    }
+    /* 
+     * Método para registrar un movimiento en el inventario de una sucursal.
+     * Este endpoint recibe un objeto MovimientoRequest que contiene la información del movimiento a registrar.
+     */
+    @Operation(summary = &quot;Registrar Movimiento&quot;, description = &quot;Registra un movimiento en el inventario de una sucursal.&quot;)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Registro creado correctamente&quot;, content = @Content(mediaType = &quot;application/json&quot;, schema = @Schema(implementation = MovimientoDTO.class)))
+    })
+    /*
+     * Método para registrar un movimiento en el inventario de una sucursal.
+     * Este endpoint recibe un objeto MovimientoRequest que contiene la información del movimiento a registrar.
+     */
     @PostMapping(&quot;/movimiento&quot;)
     public ResponseEntity&lt;MovimientoDTO&gt; registrarMovimiento(@RequestBody MovimientoRequest request) {
-<span class="fc" id="L45">        MovimientoDTO movimiento = sucursalService.registrarMovimientoEnInventario(request);</span>
-<span class="fc" id="L46">        return ResponseEntity.ok(movimiento);</span>
+<span class="fc" id="L151">        logger.info(&quot;Registrando movimiento en inventario: {}&quot;, request);</span>
+<span class="fc" id="L152">        MovimientoDTO movimiento = sucursalService.registrarMovimientoEnInventario(request);</span>
+<span class="fc" id="L153">        logger.info(&quot;Movimiento registrado: {}&quot;, movimiento);</span>
+<span class="fc" id="L154">        return ResponseEntity.ok(movimiento);</span>
     }   
 
+    @GetMapping(&quot;/alertas/sucursal/{sucursalId}/producto/{productoId}&quot;)
+    public ResponseEntity&lt;List&lt;AlertaInventario&gt;&gt; listarAlertas(
+            @PathVariable Long sucursalId,
+            @PathVariable Long productoId) {
+<span class="fc" id="L161">        List&lt;AlertaInventario&gt; alertas = sucursalService.obtenerAlertasPorSucursalYProducto(sucursalId, productoId);</span>
+<span class="fc" id="L162">        return ResponseEntity.ok(alertas);</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

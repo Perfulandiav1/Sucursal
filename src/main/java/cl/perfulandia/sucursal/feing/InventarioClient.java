@@ -21,10 +21,22 @@ import java.util.List;
  */
 @FeignClient(name = "inventario-service", url = "http://localhost:8081")
 public interface InventarioClient {
-
+    /**
+     * Registra un movimiento de inventario.
+     *
+     * @param request El objeto MovimientoRequest que contiene los detalles del movimiento.
+     * @return Un objeto MovimientoDTO que representa el movimiento registrado.
+     */
     @PostMapping("/api/movimientos/registrar")
     MovimientoDTO registrarMovimiento(@RequestBody MovimientoRequest request);
 
+    /**
+     * Lista las alertas de inventario para una sucursal específica y un producto específico.
+     *
+     * @param sucursalId El ID de la sucursal para la cual se desean listar las alertas.
+     * @param productoId El ID del producto para el cual se desean listar las alertas.
+     * @return Una lista de objetos AlertaInventario que representan las alertas de inventario.
+     */
     @GetMapping("/api/alertas/obtener/sucursal/{sucursalId}/producto/{productoId}")
     List<AlertaInventario> listarAlertasPorSucursalYProducto(
         @PathVariable("sucursalId") Long sucursalId,

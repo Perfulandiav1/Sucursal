@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SucursalService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sucursal</a> &gt; <a href="index.source.html" class="el_package">cl.perfulandia.sucursal.service</a> &gt; <span class="el_source">SucursalService.java</span></div><h1>SucursalService.java</h1><pre class="source lang-java linenums">package cl.perfulandia.sucursal.service;
 
+import cl.perfulandia.sucursal.controller.SucursalController;
+import cl.perfulandia.sucursal.dto.AlertaInventario;
 import cl.perfulandia.sucursal.dto.MovimientoDTO;
 import cl.perfulandia.sucursal.dto.MovimientoRequest;
 import cl.perfulandia.sucursal.feing.InventarioClient;
 import cl.perfulandia.sucursal.modelo.Sucursal;
 import cl.perfulandia.sucursal.repository.SucursalRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -13,35 +17,73 @@ import java.util.List;
 
 @Service
 public class SucursalService {
+<span class="fc" id="L20">    private static final Logger logger = LoggerFactory.getLogger(SucursalController.class);</span>
     private final SucursalRepository sucursalRepository;
 
-<span class="fc" id="L18">    public SucursalService(SucursalRepository sucursalRepository) {</span>
-<span class="fc" id="L19">        this.sucursalRepository = sucursalRepository;</span>
-<span class="fc" id="L20">    }</span>
-
+<span class="fc" id="L23">    public SucursalService(SucursalRepository sucursalRepository) {</span>
+<span class="fc" id="L24">        logger.info(&quot;Inicializando SucursalService&quot;);</span>
+<span class="fc" id="L25">        this.sucursalRepository = sucursalRepository;</span>
+<span class="fc" id="L26">        logger.info(&quot;SucursalService inicializado correctamente&quot;);</span>
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        logger.debug(&quot;SucursalRepository inyectado: {}&quot;, sucursalRepository != null);</span>
+<span class="fc" id="L28">    }</span>
+    
+    
+    /**
+     * Obtiene una lista de todas las sucursales.
+     * 
+     * @return Lista de Sucursal
+     */
     public List&lt;Sucursal&gt; obtenerSucursales() {
-<span class="fc" id="L23">        return sucursalRepository.findAll();</span>
+<span class="fc" id="L37">        logger.info(&quot;Obteniendo lista de todas las sucursales&quot;);</span>
+        // Llama al repositorio para obtener la lista de sucursales
+<span class="fc" id="L39">        return sucursalRepository.findAll();</span>
     }
 
     public Sucursal obtenerSucursalPorId(Long id) {
-<span class="fc" id="L27">        return sucursalRepository.findById(id).orElse(null);</span>
+<span class="fc" id="L43">        logger.info(&quot;Obteniendo sucursal con ID: {}&quot;, id);</span>
+        // Llama al repositorio para obtener la sucursal por ID     
+<span class="fc" id="L45">        return sucursalRepository.findById(id).orElse(null);</span>
     }
 
 
     public Sucursal guardarSucursal(Sucursal sucursal) {
-<span class="fc" id="L32">        return sucursalRepository.save(sucursal);</span>
+<span class="fc" id="L50">        logger.info(&quot;Guardando sucursal: {}&quot;, sucursal);</span>
+        // Llama al repositorio para guardar la sucursal
+<span class="fc" id="L52">        return sucursalRepository.save(sucursal);</span>
     }
 
     public void eliminarSucursal(Long id) {
-<span class="fc" id="L36">        sucursalRepository.deleteById(id);</span>
-<span class="fc" id="L37">    }</span>
+<span class="fc" id="L56">        logger.info(&quot;Eliminando sucursal con ID: {}&quot;, id);</span>
+        // Llama al repositorio para eliminar la sucursal por ID
+<span class="fc" id="L58">        sucursalRepository.deleteById(id);</span>
+<span class="fc" id="L59">    }</span>
 
     @Autowired
     private InventarioClient inventarioClient;
 
     public MovimientoDTO registrarMovimientoEnInventario(MovimientoRequest request) {
-<span class="fc" id="L43">        return inventarioClient.registrarMovimiento(request);</span>
+<span class="fc" id="L65">        logger.info(&quot;Registrando movimiento en inventario: {}&quot;, request);</span>
+        // Llama al cliente Feign para registrar el movimiento en el inventario
+<span class="fc" id="L67">        return inventarioClient.registrarMovimiento(request);</span>
     }
 
+    public MovimientoDTO registrarMovimientoEnInventario(Long sucursalId, Long productoId, Integer cantidad, String tipo) {
+<span class="fc" id="L71">        MovimientoRequest req = new MovimientoRequest();</span>
+<span class="fc" id="L72">        req.setSucursalId(sucursalId);</span>
+
+<span class="fc" id="L74">        MovimientoRequest.ProductoDTO prod = new MovimientoRequest.ProductoDTO();</span>
+<span class="fc" id="L75">        prod.setId(productoId);</span>
+<span class="fc" id="L76">        req.setProducto(prod);</span>
+
+<span class="fc" id="L78">        req.setCantidad(cantidad);</span>
+<span class="fc" id="L79">        req.setTipo(tipo);</span>
+
+        // Llamada al Feign Client
+<span class="fc" id="L82">        return inventarioClient.registrarMovimiento(req);</span>
+    }
+
+    public List&lt;AlertaInventario&gt; obtenerAlertasPorSucursalYProducto(Long sucursalId, Long productoId) {
+<span class="fc" id="L86">        return inventarioClient.listarAlertasPorSucursalYProducto(sucursalId, productoId);</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

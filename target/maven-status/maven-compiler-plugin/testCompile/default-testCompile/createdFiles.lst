@@ -1,3 +1,9 @@
+cl\perfulandia\sucursal\assemblers\assemblersSucursalTest.class
 cl\perfulandia\sucursal\SucursalApplicationTests.class
+cl\perfulandia\sucursal\dto\MovimientoDTOTest.class
 cl\perfulandia\sucursal\controller\SucursalControllerTest.class
+cl\perfulandia\sucursal\dto\AlertaInventarioTest.class
 cl\perfulandia\sucursal\service\SucursalServiceTest.class
+cl\perfulandia\sucursal\modelo\SucursalModeloTest.class
+cl\perfulandia\sucursal\dto\MovimientoRequestDtoTest.class
+cl\perfulandia\sucursal\dto\SucursalDTOTest.class

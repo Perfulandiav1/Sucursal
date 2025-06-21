@@ -1,4 +1,11 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 sucursal,cl.perfulandia.sucursal,SucursalApplication,0,8,0,0,0,3,0,2,0,2
-sucursal,cl.perfulandia.sucursal.controller,SucursalController,0,33,0,0,0,10,0,6,0,6
-sucursal,cl.perfulandia.sucursal.service,SucursalService,0,34,0,0,0,9,0,6,0,6
+sucursal,cl.perfulandia.sucursal.dto,MovimientoDTO,34,242,26,28,0,7,20,24,0,17
+sucursal,cl.perfulandia.sucursal.dto,SucursalDTO,51,202,27,19,0,8,23,16,1,15
+sucursal,cl.perfulandia.sucursal.dto,MovimientoRequest,154,42,38,0,0,5,22,10,3,10
+sucursal,cl.perfulandia.sucursal.dto,MovimientoRequest.ProductoDTO,13,62,6,8,0,2,6,8,1,6
+sucursal,cl.perfulandia.sucursal.dto,AlertaInventario,33,226,24,24,0,7,19,22,0,17
+sucursal,cl.perfulandia.sucursal.modelo,Sucursal,29,206,22,24,0,6,17,21,0,15
+sucursal,cl.perfulandia.sucursal.controller,SucursalController,0,113,1,3,0,28,1,9,0,8
+sucursal,cl.perfulandia.sucursal.assemblers,SucursalModelAssembler,0,104,0,0,0,12,0,2,0,2
+sucursal,cl.perfulandia.sucursal.service,SucursalService,1,105,1,1,0,27,1,9,0,9

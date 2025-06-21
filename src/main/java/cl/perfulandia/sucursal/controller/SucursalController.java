@@ -153,7 +153,13 @@ public class SucursalController {
         logger.info("Movimiento registrado: {}", movimiento);
         return ResponseEntity.ok(movimiento);
     }   
-
+    /**
+     * Endpoint para listar alertas de inventario por sucursal y producto.
+     * 
+     * @param sucursalId ID de la sucursal.
+     * @param productoId ID del producto.
+     * @return ResponseEntity con una lista de alertas de inventario.
+     */
     @GetMapping("/alertas/sucursal/{sucursalId}/producto/{productoId}")
     public ResponseEntity<List<AlertaInventario>> listarAlertas(
             @PathVariable Long sucursalId,

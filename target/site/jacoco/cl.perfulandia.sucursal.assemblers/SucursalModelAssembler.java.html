@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SucursalModelAssembler.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">sucursal</a> &gt; <a href="index.source.html" class="el_package">cl.perfulandia.sucursal.assemblers</a> &gt; <span class="el_source">SucursalModelAssembler.java</span></div><h1>SucursalModelAssembler.java</h1><pre class="source lang-java linenums">package cl.perfulandia.sucursal.assemblers;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.server.RepresentationModelAssembler;
+import org.springframework.stereotype.Component;
+import cl.perfulandia.sucursal.controller.SucursalController;
+import cl.perfulandia.sucursal.modelo.Sucursal;
+/*
+ * Ensamblador de modelos para la entidad Sucursal.
+ * Este ensamblador convierte una entidad Sucursal en un EntityModel&lt;Sucursal&gt;
+ */
+@Component
+<span class="fc" id="L14">public class SucursalModelAssembler implements RepresentationModelAssembler&lt;Sucursal, EntityModel&lt;Sucursal&gt;&gt; {</span>
+    /*
+     * Método que convierte una entidad Sucursal en un EntityModel&lt;Sucursal&gt;.
+     * Este método agrega enlaces HATEOAS a la entidad Sucursal para facilitar la navegación
+     */
+    @Override
+    @org.springframework.lang.NonNull
+    public EntityModel&lt;Sucursal&gt; toModel(Sucursal sucursal) {
+        /*
+         * Enlaces HATEOAS para la entidad Sucursal.
+         * - Enlace para obtener la sucursal por ID
+         */
+<span class="fc" id="L26">        Link selfLink = linkTo(methodOn(SucursalController.class).obtenerSucursalPorId(sucursal.getSucursalId()))</span>
+<span class="fc" id="L27">                        .withRel(&quot;Obtener Sucursal por ID&quot;).withType(&quot;GET&quot;).withTitle(&quot;Obtener Sucursal por ID&quot;);</span>
+        /*
+         * Enlaces adicionales para la entidad Sucursal.
+         * - Enlace para obtener todas las sucursales
+         */
+<span class="fc" id="L32">        Link allLink = linkTo(methodOn(SucursalController.class).obteneSucursales())</span>
+<span class="fc" id="L33">                        .withRel(&quot;Todas las sucursales&quot;).withType(&quot;GET&quot;).withTitle(&quot;Obtener Todas las Sucursales&quot;);</span>
+        /*
+         * Enlaces para crear, eliminar y registrar movimientos en la sucursal.
+         * - Enlace para crear una nueva sucursal
+         * - Enlace para eliminar la sucursal por ID
+         * - Enlace para registrar un movimiento en inventario
+         */
+<span class="fc" id="L40">        Link crearLink = linkTo(methodOn(SucursalController.class).guardarSucursal(sucursal))</span>
+<span class="fc" id="L41">                        .withRel(&quot;Agregar Sucursal&quot;).withType(&quot;POST&quot;).withTitle(&quot;Agregar Nueva Sucursal&quot;);</span>
+
+<span class="fc" id="L43">        Link eliminarLink = linkTo(methodOn(SucursalController.class).eliminarSucursal(sucursal.getSucursalId()))</span>
+<span class="fc" id="L44">        .withRel(&quot;Eliminar Sucursal&quot;).withType(&quot;DELETE&quot;).withTitle(&quot;Eliminar Sucursal&quot;);</span>
+
+<span class="fc" id="L46">        Link crearMovimientoLink = linkTo(methodOn(SucursalController.class).registrarMovimiento(null))</span>
+<span class="fc" id="L47">        .withRel(&quot;Registrar Movimiento&quot;).withType(&quot;POST&quot;).withTitle(&quot;Registrar Movimiento en Inventario&quot;);</span>
+
+        // Retornar el EntityModel con todos los enlaces
+<span class="fc" id="L50">        return EntityModel.of(sucursal, selfLink, allLink, crearLink, eliminarLink, crearMovimientoLink);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.10.202304240956</span></div></body></html>

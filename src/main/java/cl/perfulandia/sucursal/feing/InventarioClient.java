@@ -19,7 +19,7 @@ import java.util.List;
  * @version 1.0
  * @since 1.0
  */
-@FeignClient(name = "inventario-service", url = "http://localhost:8081")
+@FeignClient(name = "inventario-service", url = "https://inventario-8c66.onrender.com")
 public interface InventarioClient {
     /**
      * Registra un movimiento de inventario.
